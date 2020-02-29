@@ -127,3 +127,13 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# editor
+.vscode
+
+# opencv install files
+opencv*/
+opencv*.zip
+
+# images
+images/

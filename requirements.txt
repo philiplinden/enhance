@@ -1,0 +1,3 @@
+numpy
+Click
+opencv-contrib-python>=4.0.0
