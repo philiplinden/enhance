@@ -1,11 +1,20 @@
 #!/usr/bin/env python3
 
 import click
-import stitch
+from stitch import commands as stitch
 
 
-@click.command()
+@click.group(context_settings={'help_option_names': ['-h', '-?', '--help']},
+             invoke_without_command=True)
 @click.argument('source_dir', type=click.Path(exists=True, file_okay=False))
+@click.pass_context
+def cli(ctx, source_dir):
+    click.echo('Hello world!', err=True)
+    if ctx.invoked_subcommand is None:
+        print(ctx.obj.json)
+
+
+@cli.command()
 @click.option(
     '--output', '-o', default='stitched_image.jpg', show_default=True,
     help='The file name of the output image.'
@@ -14,13 +23,15 @@ import stitch
     '--verbose', '-v', is_flag=True,
     help='Print detailed log messages.'
 )
-def main(source_dir, output, verbose):
+def stitch(source_dir, output, verbose):
+    # The main function that runs when the CLI is called
     if verbose:
         print('Input parameters\n----------------'
               f'\nsource directory: {source_dir}'
               f'\noutput file: {output}'
               )
+    print('hello again')
 
 
-if __name__ == "__main__":
-    main()
+if __name__ == '__main__':
+    cli()

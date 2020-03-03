@@ -17,4 +17,8 @@ setup(name='enhance',
           'Click',
           'opencv-contrib-python'
       ],
+    entry_points='''
+        [console_scripts]
+        enhance=cli:test
+    ''',
       zip_safe=False)

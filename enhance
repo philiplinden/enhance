@@ -1,0 +1,7 @@
+# #!/bin/bash
+# if [ -x ${DOCKER_TAG} ]; then
+#    DOCKER_TAG=latest
+# fi
+# docker run --rm -it \
+#     --volume $PWD:/app \
+#     philiplinden/enhance:${DOCKER_TAG} /app/cli.py $@

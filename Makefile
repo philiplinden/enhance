@@ -1,10 +1,10 @@
-OPENCV_VERSION=4.2.0
+DOCKER_TAG = latest
 
 build:
-	docker build -f Dockerfile philiplinden/opencv:${OPENCV_VERSION} .
+	docker build -f Dockerfile philiplinden/enhance:${DOCKER_TAG} .
 
 pull:
-	docker pull philiplinden/opencv:${OPENCV_VERSION}
+	docker pull philiplinden/enhance:${DOCKER_TAG}
 
 push:
-	docker push philiplinden/opencv:${OPENCV_VERSION}
+	docker push philiplinden/enhance:${DOCKER_TAG}
