@@ -5,3 +5,4 @@
 # docker run --rm -it \
 #     --volume $PWD:/app \
 #     philiplinden/enhance:${DOCKER_TAG} /app/cli.py $@
+python cli.py $@
