@@ -3,7 +3,7 @@
 import logging
 import click
 
-import utilities
+import utils
 
 import stitcher
 import superres
@@ -33,7 +33,7 @@ def cli(verbose, debug):
 )
 def stitch(source_dir, output):
     # The main function that runs when the CLI is called
-    stitcher.stitch_images(source_dir, output)
+    stitcher.stitch(source_dir, output)
 
 
 @cli.command()
@@ -49,11 +49,20 @@ def zoom(source_dir, output):
 
 @cli.command()
 def test():
-    utilities.test_logger()
+    # test the current logging level
+    utils.test_logger()
 
 
-cli.add_command(stitch)
+@cli.command()
+@click.argument('source_dir', type=click.Path(exists=True, file_okay=False))
+def check(source_dir):
+    # check if there are more than 2 images in the source directory
+    utils.check_dir_for_images(source_dir)
+
+
 cli.add_command(test)
+cli.add_command(check)
+cli.add_command(stitch)
 
 
 if __name__ == '__main__':
