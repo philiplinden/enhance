@@ -15,7 +15,7 @@ log = logging.getLogger()
 
 
 def _mask_null_pixels(image, buffer_pixels=10):
-    log.info('Determining crop area...')
+    log.debug('Determining crop area...')
     # add pixels to edge to help mask the area
     cv2.copyMakeBorder(image,
                        buffer_pixels,
@@ -33,43 +33,65 @@ def _mask_null_pixels(image, buffer_pixels=10):
 
 
 def _get_outline_from_mask(binary_mask):
+    log.debug('Getting contours from binary mask...')
     # find all external contours in the threshold image
     contours = cv2.findContours(binary_mask, cv2.RETR_EXTERNAL,
                                 cv2.CHAIN_APPROX_SIMPLE)[0]
     # find the largest contour which will be the contour/outline of
     # the stitched image
-    return max(contours, key=cv2.contourArea)
+    outline = max(contours, key=cv2.contourArea)
+    return outline
 
 
-def _get_rectangle_from_outline(outline, array_shape):
-    # allocate memory for the mask which will contain the
-    # rectangular bounding box of the stitched image region
-    mask = np.zeros(array_shape, dtype="uint8")
+def _get_rectangle_from_outline(outline):
+    log.debug('Calculating bounding box...')
+    # rectangular bounding box of the given contour
     (x, y, w, h) = cv2.boundingRect(outline)
-    cv2.rectangle(mask, (x, y), (x + w, y + h), 255, -1)
-    return mask
+    return (x, y, w, h)
 
 
 def _erode_binary_mask_to_boundary(binary_mask, boundary_mask):
+    log.debug('Eroding binary mask until no null pixels exist...')
     # create two copies of the mask: one to serve as our actual
     # minimum rectangular region and another to serve as a counter
     # for how many pixels need to be removed to form the minimum
     # rectangular region
-    minRect = mask.copy()
-    sub = mask.copy()
+    min_rect = boundary_mask.copy()
+    sub = boundary_mask.copy()
     # keep looping until there are no non-zero pixels left in the
     # subtracted image
     while cv2.countNonZero(sub) > 0:
         # erode the minimum rectangular mask and then subtract
         # the thresholded image from the minimum rectangular mask
         # so we can count if there are any non-zero pixels left
-        minRect = cv2.erode(minRect, None)
-        sub = cv2.subtract(minRect, thresh)
+        min_rect = cv2.erode(min_rect, None)
+        sub = cv2.subtract(min_rect, binary_mask)
+    return min_rect
 
 
 def crop_to_rectangle(image, buffer_pixels=10):
-    # mask the outer edge of the image
-    pass
+    log.info('Cropping image to the largest full rectangular area...')
+    # mask the foreground from the background
+    binary_mask = _mask_null_pixels(image, buffer_pixels=buffer_pixels)
+
+    # get the contour defining the edge of the stitched region
+    outline = _get_outline_from_mask(binary_mask)
+
+    # allocate memory for the rectangular mask
+    (x, y, w, h) = _get_rectangle_from_outline(outline)
+    boundary_mask = np.zeros(binary_mask.shape, dtype="uint8")
+    cv2.rectangle(boundary_mask, (x, y), (x + w, y + h), 255, -1)
+
+    # erode the rectangular boundary mask until no null pixels exist within it
+    min_rect = _erode_binary_mask_to_boundary(binary_mask, boundary_mask)
+
+    # find contours in the minimum rectangular mask
+    roi = _get_outline_from_mask(min_rect)
+
+    # extract the bounding box (x, y)-coordinates
+    (x, y, w, h) = _get_rectangle_from_outline(roi)
+
+    return image[y:y + h, x:x + w]
 
 
 def stitch_images(images):
@@ -105,7 +127,7 @@ def stitch(source_dir, output_path='stitched_image.jpg', crop_output=False):
 
     if crop_output:
         # crop output to largest full rectangle
-        stitched_image = _crop_to_rectangle(stitched_image)
+        stitched_image = crop_to_rectangle(stitched_image)
 
     # save result to disk
     utils.save_image(output_path, stitched_image)

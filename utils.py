@@ -46,13 +46,13 @@ def _is_valid_image_filename(filename):
 
 def check_dir_for_images(source_dir):
     # check if there are more than 2 images in the source directory
-    log.info(f'Looking for image files in {source_dir}...')
+    log.debug(f'Looking for image files in {source_dir}...')
     image_paths = []
     for root, subdirs, files in os.walk(source_dir):
         for file in files:
             if _is_valid_image_filename(file):
                 image_paths.append(os.path.join(root, file))
-    log.info(f'Found {len(image_paths)} images.')
+    log.debug(f'Found {len(image_paths)} images.')
     return image_paths
 
 
@@ -65,7 +65,7 @@ def load_images(source_dir):
         return None
 
     # Read images from files and append them to a list
-    log.info(f'Loading {len(images_to_load)} images from {source_dir}...')
+    log.debug(f'Loading {len(images_to_load)} images from {source_dir}...')
     images = []
     for filepath in images_to_load:
         image = cv2.imread(filepath)
