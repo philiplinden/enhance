@@ -137,6 +137,11 @@ opencv*.zip
 
 # images
 images/
+.jpg
+.jpeg
+.png
+.tif
+.tiff
 
 # mac
 .DS_Store
