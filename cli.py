@@ -31,9 +31,13 @@ def cli(verbose, debug):
     '--output', '-o', default='stitched_image.jpg', show_default=True,
     help='The file name of the output image.'
 )
-def stitch(source_dir, output):
+@click.option(
+    '--crop', is_flag=True,
+    help='Crop output file to the largest full rectangle.'
+)
+def stitch(source_dir, output, crop):
     # The main function that runs when the CLI is called
-    stitcher.stitch(source_dir, output)
+    stitcher.stitch(source_dir, output, crop_output=crop)
 
 
 @cli.command()
