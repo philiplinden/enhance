@@ -52,7 +52,7 @@ def check_dir_for_images(source_dir):
         for file in files:
             if _is_valid_image_filename(file):
                 image_paths.append(os.path.join(root, file))
-    log.debug(f'Found {len(image_paths)} images.')
+    log.debug(f'Found {len(image_paths)} images. {image_paths}')
     return image_paths
 
 

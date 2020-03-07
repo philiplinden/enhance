@@ -3,6 +3,7 @@
 #################################################
 # Stitch images together into one larger image. #
 # https://www.pyimagesearch.com/2018/12/17/image-stitching-with-opencv-and-python
+# https://www.pyimagesearch.com/2016/01/25/real-time-panorama-and-image-stitching-with-opencv/
 #################################################
 
 import logging
@@ -66,32 +67,39 @@ def _erode_binary_mask_to_boundary(binary_mask, boundary_mask):
         # so we can count if there are any non-zero pixels left
         min_rect = cv2.erode(min_rect, None)
         sub = cv2.subtract(min_rect, binary_mask)
+        # if cv2.countNonZero(sub) % 100 == 0:
+        #     # save result to disk for debugging
+        #     utils.save_image('binary_mask.jpg', binary_mask)
+        #     utils.save_image('rect_mask.jpg', min_rect)
     return min_rect
 
 
 def crop_to_rectangle(image, buffer_pixels=10):
-    log.info('Cropping image to the largest full rectangular area...')
-    # mask the foreground from the background
-    binary_mask = _mask_null_pixels(image, buffer_pixels=buffer_pixels)
+    log.warning('Unable to crop image: This feature has not been implemented '
+                'yet!')
+    # log.info('Cropping image to the largest full rectangular area...')
+    # # mask the foreground from the background
+    # binary_mask = _mask_null_pixels(image, buffer_pixels=buffer_pixels)
 
-    # get the contour defining the edge of the stitched region
-    outline = _get_outline_from_mask(binary_mask)
+    # # get the contour defining the edge of the stitched region
+    # outline = _get_outline_from_mask(binary_mask)
 
-    # allocate memory for the rectangular mask
-    (x, y, w, h) = _get_rectangle_from_outline(outline)
-    boundary_mask = np.zeros(binary_mask.shape, dtype="uint8")
-    cv2.rectangle(boundary_mask, (x, y), (x + w, y + h), 255, -1)
+    # # allocate memory for the rectangular mask
+    # (x, y, w, h) = _get_rectangle_from_outline(outline)
+    # boundary_mask = np.zeros(binary_mask.shape, dtype="uint8")
+    # cv2.rectangle(boundary_mask, (x, y), (x + w, y + h), 255, -1)
 
-    # erode the rectangular boundary mask until no null pixels exist within it
-    min_rect = _erode_binary_mask_to_boundary(binary_mask, boundary_mask)
+    # # erode the rectangular boundary mask until no null pixels exist within it
+    # min_rect = _erode_binary_mask_to_boundary(binary_mask, boundary_mask)
 
-    # find contours in the minimum rectangular mask
-    roi = _get_outline_from_mask(min_rect)
+    # # find contours in the minimum rectangular mask
+    # roi = _get_outline_from_mask(min_rect)
 
-    # extract the bounding box (x, y)-coordinates
-    (x, y, w, h) = _get_rectangle_from_outline(roi)
+    # # extract the bounding box (x, y)-coordinates
+    # (x, y, w, h) = _get_rectangle_from_outline(roi)
 
-    return image[y:y + h, x:x + w]
+    # return image[y:y + h, x:x + w]
+    return image
 
 
 def stitch_images(images):
