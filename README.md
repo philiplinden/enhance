@@ -8,7 +8,7 @@ requirements
 - OpenCV>=4.0.0
 
 ## Run
-1. make the CLI executible `chmod +x ./enhance`
+1. make the CLI executable `chmod +x ./enhance`
 2. `./enhance --help`
 
 ## Quickstart
